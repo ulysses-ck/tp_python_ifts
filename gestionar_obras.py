@@ -2,17 +2,18 @@ import pandas as pd
 from peewee import *
 
 
-class GestionarObras (Model):
+class GestionarObras():
 	def __init__(self) -> None:
 		self.__df_obras_publicas = self.extraer_datos()
+		self.__sqlite_db_obras = self.conectar_db()
 
 	@property
 	def df_obras_publicas(self):
 		return self.__df_obras_publicas
 
-	@df_obras_publicas.setter
-	def df_obras_publicas(self, new_df):
-		self.__df_obras_publicas = new_df
+	@property
+	def sqlite_db_obras(self):
+		return self.__sqlite_db_obras
 
 	def extraer_datos(self):
 		try:
@@ -42,31 +43,3 @@ class GestionarObras (Model):
 
 	def nueva_obra(self):
 		pass
-class Obra():
-    
-    def nuevo_proyecto():
-        pass
-    
-    def iniciar_contratacion():
-        pass
-    
-    def adjudicar_obra():
-        pass
-    
-    def iniciar_obra():
-        pass
-    
-    def actualizar_porcentaje_avance():
-        pass
-    
-    def incrementar_plazo():
-        pass
-    
-    def incrementar_mano_obra():
-        pass
-    
-    def finalizar_obra():
-        pass
-    
-    def rescindir_obra():
-        pass
