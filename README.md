@@ -13,3 +13,14 @@ Run this command to install dependencies
 ```sh
 pip install -r requirements.txt
 ```
+# Contributing
+```sh
+git clone https://github.com/ulysses-ck/tp_python_ifts/edit/main/README.md
+cd tp_python_ifts
+```
+## Make your changes and create a new branch 
+```sh
+git checkout -b dev
+git add .
+git commit -m "feat: [new feature]"
+```
