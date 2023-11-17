@@ -128,7 +128,7 @@ class Obra(BaseModel):
   class Meta:
     db_table = "obras_publicas"
 
-  def nuevo_proyecto(self):
+  def nuevo_proyecto(self, nombre, descripcion, monto_contrato, direccion, plazo_meses, beneficiarios, mano_obra, porcenta_avance):
     print("nuevo proyecto")
 
   def iniciar_contratacion(self):

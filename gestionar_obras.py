@@ -1,7 +1,6 @@
 import pandas as pd
 from peewee import *
 from abc import ABCMeta
-
 class GestionarObras(metaclass=ABCMeta):
 	df_obras_publicas = None
 	sqlite_db_obras = None
