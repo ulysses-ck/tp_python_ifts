@@ -1,6 +1,10 @@
 import pandas as pd
 from peewee import *
+
 from abc import ABCMeta
+
+from modelo_orm import *
+
 class GestionarObras(metaclass=ABCMeta):
 	df_obras_publicas = None
 	sqlite_db_obras = None
@@ -26,7 +30,7 @@ class GestionarObras(metaclass=ABCMeta):
 
 	@classmethod
 	def mapear_orm(cls):
-		print("mapear orm")
+		cls.sqlite_db_obras.create_tables([TipoAreaResponsable, TipoBarrio, TipoCompromiso, TipoComuna, TipoDestacada, TipoEntorno, TipoEtapa, TipoTipo, Obra, TipoContratacion])
 
 	@classmethod
 	def limpiar_datos(cls, df):
@@ -34,8 +38,25 @@ class GestionarObras(metaclass=ABCMeta):
 
 	@classmethod
 	def cargar_datos(cls):
+		# TODO cargar los datos del csv a la tabla
 		print("cargar datos")
 
 	@classmethod
 	def nueva_obra(cls):
+		# TODO crear nueva obra utilizando el modelo orm
 		print("nueva obra")
+
+	@classmethod
+	def obtener_identificadores(cls):
+		# TODO obtener indicadores segun corresponda
+		# a. Listado de todas las áreas responsables.
+		# b. Listado de todos los tipos de obra.
+		# c. Cantidad de obras que se encuentran en cada etapa.
+		# d. Cantidad de obras y monto total de inversión (atributo financiamiento) por tipo de obra.
+		# e. Listado de todos los barrios pertenecientes a las comunas 1, 2 y 3.
+		# f. Cantidad de obras finalizadas y su y monto total de inversión en la comuna 1. (atributo financiamiento)
+		# g. Cantidad de obras finalizadas en un plazo menor o igual a 24 meses.
+		# h. Porcentaje total de obras finalizadas. (atributo etapa)
+		# i. Cantidad total de mano de obra empleada.
+		# j. Monto total de inversión. (atributo financiamiento)
+		print("obtener indicadores")
