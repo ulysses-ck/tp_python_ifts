@@ -76,7 +76,7 @@ class Fechas(BaseModel):
 
 class LicitacionOfertaEmpresa(BaseModel):
   nombre = CharField()
-  id_area_responsable = ForeignKeyField(TipoAreaResponsable, "tipos_area_responsable")
+  id_area_responsable = ForeignKeyField(TipoAreaResponsable, backref="tipos_area_responsable")
   id_contratacion = ForeignKeyField(TipoContratacion, backref="tipos_contratacion")
   fechas = ForeignKeyField(Fechas, backref="fechas")
   id_empresa = ForeignKeyField(Empresa, backref="empresas")
