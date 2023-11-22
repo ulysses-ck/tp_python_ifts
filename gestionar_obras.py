@@ -22,7 +22,7 @@ class GestionarObras(metaclass=ABCMeta):
 		sqlite_db_obras = SqliteDatabase("./obras_urbanas.db")
 		try:
 			sqlite_db_obras.connect()
-			cls.sqlite_db_obras = sqlite_db_obras
+			return sqlite_db_obras
 		except OperationalError as e:
 			print("Se ha generado un error en la conexión a la BD.", e)
 			exit()
@@ -38,6 +38,20 @@ class GestionarObras(metaclass=ABCMeta):
 	@classmethod
 	def cargar_datos(cls):
 		# TODO cargar los datos del csv a la tabla
+
+		# get unique values from Etapa
+		unique_rows = cls.df_obras_publicas["etapa"].unique()
+
+		print(unique_rows)
+
+		for row in unique_rows:
+			print(f"etapa: {row}")
+			try:
+				TipoEtapa.create(nombre=row)
+			except IntegrityError as e:
+				print("Error insertando en TipoEtapa", e)
+
+
 		print("cargar datos")
 
 	@classmethod
@@ -60,3 +74,8 @@ class GestionarObras(metaclass=ABCMeta):
 		# j. Monto total de inversión. (atributo financiamiento)
 		print("obtener indicadores")
 
+# GestionarObras.df_obras_publicas = GestionarObras.extraer_datos()
+# GestionarObras.sqlite_db_obras = GestionarObras.conectar_db()
+# GestionarObras.mapear_orm()
+# GestionarObras.limpiar_datos()
+# GestionarObras.cargar_datos()
