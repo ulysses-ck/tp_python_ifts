@@ -13,12 +13,18 @@ Run this command to install dependencies
 ```sh
 pip install -r requirements.txt
 ```
-# Contributing
+
+## ERD (Entity Relationship Diagram)
+https://raw.githubusercontent.com/ulysses-ck/tp_python_ifts/main/diagram/ObrasPublicasDiagramaTablas.drawio.svg
+
+## Contributing
+### Clone repository
 ```sh
 git clone https://github.com/ulysses-ck/tp_python_ifts.git
 cd tp_python_ifts
 ```
-## Make your changes and create a new branch 
+
+### Make your changes and create a new branch 
 ```sh
 git checkout -b dev
 git add .
