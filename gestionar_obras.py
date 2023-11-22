@@ -44,12 +44,12 @@ class GestionarObras(metaclass=ABCMeta):
 		tablas_a_traer= ["etapa", "comuna", "barrio", "entorno", "tipo"]
 		#lista donde van a ingresar dichas colunmnas en formato tabla
 		tablas=[]
-		#ciclo para buscar cada columna basada en los datos de la primera lista y guardarlos como lista anidada
+		#ciclo para buscar cada columna de la bd que coincida con el criterio de la lista y ponerlos
+		#en una lista anidada
 		for tabs in tablas_a_traer:
 			tablas.append(cls.df_obras_publicas[tabs].unique())
-		#ciclo que lee cuantas listas anidadas hay y las persiste basandose en la ubicaciòn prefija
-		#de la primera lista
-  		for tabs in range(len(tablas)):
+		#ciclo para, identificando su posicion en la lista anidada, persistir los datos extraidos
+		for tabs in range(len(tablas)):
 			match tabs:
 				case 0:
 					for fila in tablas[0]:
@@ -83,16 +83,6 @@ class GestionarObras(metaclass=ABCMeta):
 							print("Error insertando tipo de obra", f)
 				case _:
 					print("no se cargò nada")
-				
-  
-		"""filasunicas = cls.df_obras_publicas["etapa"].unique()
-		for fila in filasunicas:
-			try:
-				TipoEtapa.create(nombre=fila)
-			except IntegrityError as f:
-				print("Error insertando etapa", f)
-		print("cargar datos")"""
-
 	@classmethod
 	def nueva_obra(cls):
 		# TODO crear nueva obra utilizando el modelo orm
@@ -112,11 +102,3 @@ class GestionarObras(metaclass=ABCMeta):
 		# i. Cantidad total de mano de obra empleada.
 		# j. Monto total de inversión. (atributo financiamiento)
 		print("obtener indicadores")
-
-miobra = GestionarObras
-print(miobra)
-miobra.df_obras_publicas = miobra.extraer_datos()
-print(miobra.df_obras_publicas)
-miobra.sqlite_db_obras = miobra.conectar_db()
-miobra.mapear_orm()
-miobra.cargar_datos()
