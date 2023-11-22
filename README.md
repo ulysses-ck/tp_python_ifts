@@ -15,7 +15,7 @@ pip install -r requirements.txt
 ```
 # Contributing
 ```sh
-git clone https://github.com/ulysses-ck/tp_python_ifts/edit/main/README.md
+git clone https://github.com/ulysses-ck/tp_python_ifts.git
 cd tp_python_ifts
 ```
 ## Make your changes and create a new branch 
