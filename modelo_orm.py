@@ -70,7 +70,7 @@ class Empresa(BaseModel):
     db_table = "empresas"
 
 class Fechas(BaseModel):
-  fecha_inicio = DateTimeField()
+  fecha_inicio = DateTimeField(null=True)
   fecha_fin_inicial = DateTimeField(null=True)
   plazo_meses = IntegerField(null=True)
 
@@ -80,7 +80,7 @@ class LicitacionOfertaEmpresa(BaseModel):
   id_contratacion = ForeignKeyField(TipoContratacion, backref="tipos_contratacion")
   fechas = ForeignKeyField(Fechas, backref="fechas")
   id_empresa = ForeignKeyField(Empresa, backref="empresas")
-  licitacion_anio = IntegerField()
+  licitacion_anio = IntegerField(null=True)
   mano_obra = IntegerField()
   beneficiarios = IntegerField()
   monto_contrato = DoubleField()
