@@ -1,17 +1,19 @@
-from typing import Optional
 import pandas as pd
 from peewee import *
+
 from abc import ABCMeta
+
 from modelo_orm import *
 
 class GestionarObras(metaclass=ABCMeta):
-	df_obras_publicas: pd.DataFrame = None
-	sqlite_db_obras: Optional[SqliteDatabase] = None
+	df_obras_publicas = None
+	sqlite_db_obras = None
 
 	@classmethod
 	def extraer_datos(cls):
 		try:
-			df = pd.read_csv("./observatorio-de-obras-urbanas.csv", sep=",")
+			df = pd.read_csv("./observatorio-de-obras-urbanas.csv")
+			cls.df = df
 			return df
 		except FileNotFoundError as e:
 			print("El archivo no existe o la ubicación del mismo es incorrecta", e)
@@ -29,30 +31,67 @@ class GestionarObras(metaclass=ABCMeta):
 
 	@classmethod
 	def mapear_orm(cls):
-		cls.sqlite_db_obras.create_tables([TipoAreaResponsable, TipoContratacion, Empresa, LicitacionOfertaEmpresa, Fechas, TipoObra, TipoEtapa, TipoEntorno, TipoComuna, TipoBarrio, Obra])
+		cls.sqlite_db_obras.create_tables([TipoAreaResponsable, TipoBarrio, TipoCompromiso, TipoComuna, TipoDestacada, TipoEntorno, TipoEtapa, TipoTipo, Obra, TipoContratacion])
 
 	@classmethod
-	def limpiar_datos(cls):
-		cls.df_obras_publicas.dropna(subset=["entorno", "nombre", "etapa", "tipo", "area_responsable", "monto_contrato", "comuna", "barrio", "fecha_inicio", "licitacion_oferta_empresa", "contratacion_tipo", "nro_contratacion", "cuit_contratista"], axis=0, inplace=True)
+	def limpiar_datos(cls, df):
+		cls.df = df.dropna(subset=["entorno", "nombre", "etapa", "tipo", "area_responsable", "monto_contrato", "comuna", "barrio", "direccion", "fecha_inicio", "porcenta_avance", "licitacion_oferta_empresa", "licitacion_anio", "contratacion_tipo", "nro_contratacion", "cuit_contratista", "mano_obra"], axis=0, inplace=True)
 
 	@classmethod
 	def cargar_datos(cls):
 		# TODO cargar los datos del csv a la tabla
-
-		# get unique values from Etapa
-		unique_rows = cls.df_obras_publicas["etapa"].unique()
-
-		print(unique_rows)
-
-		for row in unique_rows:
-			print(f"etapa: {row}")
+		#lista donde pongo las columnas a traer para convertir en tablas unicas
+		tablas_a_traer= ["etapa", "comuna", "barrio", "entorno", "tipo"]
+		#lista donde van a ingresar dichas colunmnas en formato tabla
+		tablas=[]
+		#ciclo para buscar cada columna basada en los datos de la primera lista y guardarlos como lista anidada
+		for tabs in tablas_a_traer:
+			tablas.append(cls.df_obras_publicas[tabs].unique())
+		#ciclo que lee cuantas listas anidadas hay y las persiste basandose en la ubicaciòn prefija
+		#de la primera lista
+  		for tabs in range(len(tablas)):
+			match tabs:
+				case 0:
+					for fila in tablas[0]:
+						try:
+							TipoEtapa.create(nombre=fila)
+						except IntegrityError as f:
+							print("Error insertando etapa", f)
+				case 1:
+					for fila in tablas[1]:
+						try:
+							TipoComuna.create(nombre=fila)
+						except IntegrityError as f:
+							print("Error insertando comuna", f)
+				case 2:
+					for fila in tablas[2]:
+						try:
+							TipoBarrio.create(nombre=fila)
+						except IntegrityError as f:
+							print("Error insertando barrio", f)
+				case 3:
+					for fila in tablas[3]:
+						try:
+							TipoEntorno.create(nombre=fila)
+						except IntegrityError as f:
+							print("Error insertando entorno", f)
+				case 4:
+					for fila in tablas[4]:
+						try:
+							TipoTipo.create(nombre=fila)
+						except IntegrityError as f:
+							print("Error insertando tipo de obra", f)
+				case _:
+					print("no se cargò nada")
+				
+  
+		"""filasunicas = cls.df_obras_publicas["etapa"].unique()
+		for fila in filasunicas:
 			try:
-				TipoEtapa.create(nombre=row)
-			except IntegrityError as e:
-				print("Error insertando en TipoEtapa", e)
-
-
-		print("cargar datos")
+				TipoEtapa.create(nombre=fila)
+			except IntegrityError as f:
+				print("Error insertando etapa", f)
+		print("cargar datos")"""
 
 	@classmethod
 	def nueva_obra(cls):
@@ -74,8 +113,10 @@ class GestionarObras(metaclass=ABCMeta):
 		# j. Monto total de inversión. (atributo financiamiento)
 		print("obtener indicadores")
 
-# GestionarObras.df_obras_publicas = GestionarObras.extraer_datos()
-# GestionarObras.sqlite_db_obras = GestionarObras.conectar_db()
-# GestionarObras.mapear_orm()
-# GestionarObras.limpiar_datos()
-# GestionarObras.cargar_datos()
+miobra = GestionarObras
+print(miobra)
+miobra.df_obras_publicas = miobra.extraer_datos()
+print(miobra.df_obras_publicas)
+miobra.sqlite_db_obras = miobra.conectar_db()
+miobra.mapear_orm()
+miobra.cargar_datos()
