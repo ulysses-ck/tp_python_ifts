@@ -1,8 +1,6 @@
 import pandas as pd
 from peewee import *
-
 from abc import ABCMeta
-
 from modelo_orm import *
 
 class GestionarObras(metaclass=ABCMeta):
@@ -30,7 +28,7 @@ class GestionarObras(metaclass=ABCMeta):
 
 	@classmethod
 	def mapear_orm(cls):
-		cls.sqlite_db_obras.create_tables([TipoAreaResponsable, TipoBarrio, TipoCompromiso, TipoComuna, TipoDestacada, TipoEntorno, TipoEtapa, TipoTipo, Obra, TipoContratacion])
+		cls.sqlite_db_obras.create_tables([TipoAreaResponsable, TipoContratacion, Empresa, LicitacionOfertaEmpresa,Fechas, TipoObra, TipoEtapa, TipoEntorno, TipoComuna, TipoBarrio, Obra])
 
 	@classmethod
 	def limpiar_datos(cls, df):
