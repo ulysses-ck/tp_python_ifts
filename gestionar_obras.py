@@ -75,6 +75,8 @@ class GestionarObras(metaclass=ABCMeta):
 			for dato in datos_unicos_columna:
 				print(f"agregando {dato} de {tabs['name_column']} en {tabs['table']}")
 				create_new_record(property=tabs["property"], table=tabs["table"], value=dato)
+
+
 	@classmethod
 	def nueva_obra(cls):
 		# TODO crear nueva obra utilizando el modelo orm
