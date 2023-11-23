@@ -1,4 +1,13 @@
-# TP Python IFTS
+# Trabajo Practico Final Integrador - Desarrollo de Sistemas Orientados a Objetos
+
+## Integrantes
+
+* Apaza, Ulises
+* Amezaga, Diego
+* Soto, Jamil
+* Soarez Viana, Leonardo
+* Calanna, Cecilia
+
 ## Get started
 Create a new virtual environment with python in another directory that doesn't be the root project (optional)
 ```sh
