@@ -1,11 +1,6 @@
 from peewee import *
 
 sqlite_db = SqliteDatabase("obras_urbanas.db")
-try:
-  sqlite_db.connect()
-except OperationalError as e:
-  print("No se pudo realizar la conexion")
-  exit()
 
 class BaseModel(Model):
   class Meta:
@@ -132,10 +127,27 @@ class Obra(BaseModel):
     db_table = "obras_publicas"
 
   def nuevo_proyecto(self, nombre, descripcion, monto_contrato, plazo_meses, beneficiarios, mano_obra, porcentaje_avance, destacada):
-    self.nombre = nombre
-    self.descripcion = descripcion
-    self.porcentaje_avance = porcentaje_avance
-    self.destacada = destacada
+    try:
+      etapa_proyecto = TipoEtapa.get_or_create(nombre='Proyecto')
+      barrio_existente = TipoBarrio.get_or_none(id=id_barrio)
+      entorno_existente = TipoEntorno.get_or_none(id=id_entorno)
+      tipo_obra_existente = TipoObra.get_or_none(id=id_tipo_obra)
+      if etapa_proyecto and barrio_existente and entorno_existente and tipo_obra_existente:
+        self.id_barrio = barrio_existente
+        self.id_entorno = entorno_existente
+        self.id_etapa = id_etapa
+        self.id_tipo_obra = tipo_obra_existente
+        self.fechas = fechas
+        self.id_licitacion_oferta_empresa = id_licitacion_oferta_empresa
+        self.nombre = nombre
+        self.descripcion = descripcion
+        self.porcentaje_avance = porcentaje_avance
+        self.destacada = destacada
+        print("¡Nuevo proyecto de obra iniciado con éxito!")
+      else:
+        print("No se pudo iniciar el proyecto debido a valores inexistentes en la base de datos.")
+    except Exception as e:
+      print(f"Error al iniciar el proyecto: {str(e)}")
 
   def iniciar_contratacion(self):
     # TODO asignar tipo_contratacion: TipoContratacion y nro_contratacion
@@ -160,9 +172,7 @@ class Obra(BaseModel):
     self.mano_obra = nueva_mano_obra
 
   def finalizar_obra(self):
-    # TODO cambiar atributo TipoEtapa a "Finalizada" segun corresponda el indice en la tabla
     print("finalizar obra")
 
   def rescindir_obra(self):
-    # TODO cambiar atributo TipoEtapa a "Rescindida" segun corresponda el indice en la tabla
     print("rescindir obra")

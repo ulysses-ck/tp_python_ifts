@@ -2,10 +2,6 @@ from peewee import *
 from datetime import datetime
 import sqlite3
 
-conn = sqlite3.connect('obras_urbanas.db')
-
-cursor = conn.cursor()
-
 sqlite_db = SqliteDatabase("obras_urbanas.db")
 
 class BaseModel(Model):
@@ -132,10 +128,10 @@ class LicitacionOfertaEmpresa(BaseModel):
     monto_contrato = DecimalField()
     financiamiento = CharField()
     expediente_numero = CharField()
-    
+
     def __str__(self):
         return self.nro_contratacion
-    
+
     class Meta:
         db_table = "licitaciones_oferta_empresa"
 
@@ -158,23 +154,6 @@ def __str__(self):
 class Meta:
     db_table = "obras_publicas"
 
-try:
-    sqlite_db.connect()
-    sqlite_db.create_tables([
-        TipoEntorno,
-        TipoEtapa,
-        TipoTipo,
-        TipoAreaResponsable,
-        TipoComuna,
-        TipoBarrio,
-        TipoCompromiso,
-        TipoDestacada,
-        TipoContratacion,
-        LicitacionOfertaEmpresa,
-        TipoObra
-        ])
-except OperationalError as e:
-    print("No se pudo realizar la conexion") 
 
 def nuevo_proyecto(self, id_barrio, id_entorno, id_etapa, id_tipo_obra, fechas, id_licitacion_oferta_empresa, nombre, descripcion, porcentaje_avance, destacada):
         try:
@@ -195,8 +174,8 @@ def nuevo_proyecto(self, id_barrio, id_entorno, id_etapa, id_tipo_obra, fechas, 
                 self.descripcion = descripcion
                 self.porcentaje_avance = porcentaje_avance
                 self.destacada = destacada
-                self.fecha_inicio = datetime.now()  
-                self.save()  
+                self.fecha_inicio = datetime.now()
+                self.save()
 
                 print("¡Nuevo proyecto de obra iniciado con éxito!")
             else:
@@ -226,7 +205,7 @@ def adjudicar_obra(self, id_empresa, expendiente_numero):
             if empresa_existente:
                 self.id_empresa = empresa_existente
                 self.expendiente_numero = expendiente_numero
-                self.save()  
+                self.save()
 
                 print("¡Adjudicación de obra a empresa realizada con éxito!")
             else:
@@ -244,7 +223,7 @@ def iniciar_obra(self, destacada, fecha_inicio, fecha_fin_inicial, financiamient
                 self.fecha_fin_inicial = fecha_fin_inicial
                 self.id_fuente_financiamiento = fuente_financiamiento_existente
                 self.mano_obra = mano_obra
-                self.save()  
+                self.save()
 
                 print("¡Inicio de la obra registrado con éxito!")
             else:

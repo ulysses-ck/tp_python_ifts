@@ -1,19 +1,17 @@
 import pandas as pd
 from peewee import *
-
 from abc import ABCMeta
-
 from modelo_orm import *
+from typing import Optional
 
 class GestionarObras(metaclass=ABCMeta):
-	df_obras_publicas = None
-	sqlite_db_obras = None
+	df_obras_publicas: pd.DataFrame = None
+	sqlite_db_obras: Optional[SqliteDatabase] = None
 
 	@classmethod
 	def extraer_datos(cls):
 		try:
 			df = pd.read_csv("./observatorio-de-obras-urbanas.csv")
-			cls.df = df
 			return df
 		except FileNotFoundError as e:
 			print("El archivo no existe o la ubicación del mismo es incorrecta", e)
@@ -34,14 +32,14 @@ class GestionarObras(metaclass=ABCMeta):
 		cls.sqlite_db_obras.create_tables([TipoAreaResponsable, TipoBarrio, TipoCompromiso, TipoComuna, TipoDestacada, TipoEntorno, TipoEtapa, TipoTipo, Obra, TipoContratacion])
 
 	@classmethod
-	def limpiar_datos(cls, df):
-		cls.df = df.dropna(subset=["entorno", "nombre", "etapa", "tipo", "area_responsable", "monto_contrato", "comuna", "barrio", "direccion", "fecha_inicio", "porcenta_avance", "licitacion_oferta_empresa", "licitacion_anio", "contratacion_tipo", "nro_contratacion", "cuit_contratista", "mano_obra"], axis=0, inplace=True)
+	def limpiar_datos(cls):
+		cls.df_obras_publicas.dropna(subset=["entorno", "nombre", "etapa", "tipo", "area_responsable", "monto_contrato", "comuna", "barrio", "fecha_inicio", "licitacion_oferta_empresa", "contratacion_tipo", "nro_contratacion", "cuit_contratista"], axis=0, inplace=True)
 
 	@classmethod
 	def cargar_datos(cls):
 		# TODO cargar los datos del csv a la tabla
 		#lista donde pongo las columnas a traer para convertir en tablas unicas
-		tablas_a_traer= ["etapa", "comuna", "barrio", "entorno", "tipo"]
+		tablas_a_traer= ["etapa", "comuna", "barrio", "entorno", "tipo", "entorno", "area_responsable"]
 		#lista donde van a ingresar dichas colunmnas en formato tabla
 		tablas=[]
 		#ciclo para buscar cada columna de la bd que coincida con el criterio de la lista y ponerlos
