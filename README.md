@@ -8,6 +8,17 @@
 * Soarez Viana, Leonardo
 * Calanna, Cecilia
 
+# Objetivos
+El propósito de este proyecto es diseñar y desarrollar un sistema para la gestión de obras públicas, utilizando los principios de la programación orientada a objetos para estructurarlo. Además, implementamos el ORM Peewee para facilitar la persistencia de objetos en una base de datos SQLite.
+
+## Importación de Datasets:
+Este proyecto puede importar datasets desde archivos CSV.
+
+## Persistencia de Objetos con ORM Peewee:
+
+ORM significa "Object-Relational Mapping", o "Mapeo Objeto-Relacional". Esta técnica de programación permite interactuar con bases de datos relacionales utilizando objetos de programación.
+En este caso usamos el ORM Peewee para interactuar con la base de datos SQLite. Diseñamos modelos que representan las entidades necesarias, para la persistencia de datos.
+
 ## Get started
 Create a new virtual environment with python in another directory that doesn't be the root project (optional)
 ```sh
