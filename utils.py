@@ -1,7 +1,13 @@
 from peewee import *
 
-def create_unique_values(table, property, value):
+def create_new_record(table, property, value):
+
+	dict_content = {
+		property: value
+	}
+
 	try:
-		table[property] = value
+		table.create(**dict_content)
+
 	except IntegrityError as e:
-		print(f"error: {e}")
+		print("Error insertando comuna", e)
