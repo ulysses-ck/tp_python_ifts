@@ -150,10 +150,10 @@ class GestionarObras(metaclass=ABCMeta):
 		# obteniendo los datos unicos existentes en cuit_contratista
 		# datos
 
+		print(SEPARATOR_LINE)
+		print("cargando licitaciones y obras")
+		print(SEPARATOR_LINE)
 		for registro_completo in cls.df_obras_publicas.values:
-			print(SEPARATOR_LINE)
-			print("cargando licitaciones y obras")
-			print(SEPARATOR_LINE)
 			# obteniendo datos de tablas relacionadas
 			rg_area_responsable = TipoAreaResponsable.get_or_none(nombre=registro_completo[5])
 			print(rg_area_responsable)
@@ -161,22 +161,26 @@ class GestionarObras(metaclass=ABCMeta):
 			print(rg_contratacion_atr)
 			rg_empresa_atr = Empresa.get_or_none(nombre=registro_completo[21])
 			print(rg_empresa_atr)
-			# obteniendo atributos para licitacion_oferta_empresa
-			# REFACTOR optimizar tanto como utilizar una estructura de datos
-			# REFACTOR o crear una nueva funcion para recorrer y evitar codigo duplicado
-			licitacion_anio_atr = registro_completo[22] if pd.isnull(registro_completo[22]) else 0
-			print(licitacion_anio_atr)
-			mano_obra_atr = registro_completo[27] if pd.isnull(registro_completo[27]) else 0
-			print(mano_obra_atr)
-			beneficiarios_atr = registro_completo[26] if pd.isnull(registro_completo[26]) else 0
-			print(beneficiarios_atr)
-			monto_contrato_atr = registro_completo[7] if pd.isnull(registro_completo[7]) and str(monto_contrato_atr).isdigit() else 0
-			print(monto_contrato_atr)
-			financiamiento_atr = registro_completo[35] if isinstance(registro_completo[35], str) else "Sin especificar"
-			print(financiamiento_atr)
-			expediente_numero_atr = registro_completo[35] if isinstance(registro_completo[35], str) else "Sin especificar"
-			print(expediente_numero_atr)
-			LicitacionOfertaEmpresa.get_or_create(id_area_responsable=rg_area_responsable, id_contratacion=rg_contratacion_atr, id_empresa=rg_empresa_atr, licitacion_anio=licitacion_anio_atr, mano_obra=mano_obra_atr, beneficiarios=beneficiarios_atr, monto_contrato=monto_contrato_atr, financiamiento=financiamiento_atr, expediente_numero=expediente_numero_atr)
+
+			if rg_area_responsable and rg_contratacion_atr and rg_empresa_atr:
+				# obteniendo atributos para licitacion_oferta_empresa
+				# REFACTOR optimizar tanto como utilizar una estructura de datos
+				# REFACTOR o crear una nueva funcion para recorrer y evitar codigo duplicado
+				licitacion_anio_atr = registro_completo[22] if not pd.isna(registro_completo[22]) else 0
+				print(licitacion_anio_atr)
+				mano_obra_atr = registro_completo[27] if not pd.isna(registro_completo[27]) else 0
+				print(mano_obra_atr)
+				beneficiarios_atr = registro_completo[26] if not pd.isna(registro_completo[26])  else 0
+				print(beneficiarios_atr)
+				monto_contrato_atr = registro_completo[7] if not pd.isna(registro_completo[7])  else 0
+				print(monto_contrato_atr)
+				financiamiento_atr = registro_completo[35] if isinstance(registro_completo[35], str) else "Sin especificar"
+				print(financiamiento_atr)
+				expediente_numero_atr = registro_completo[33] if isinstance(registro_completo[33], str) else "Sin especificar"
+				print(expediente_numero_atr)
+				# LicitacionOfertaEmpresa.get_or_create(id_area_responsable=rg_area_responsable, id_contratacion=rg_contratacion_atr, id_empresa=rg_empresa_atr, licitacion_anio=licitacion_anio_atr, mano_obra=mano_obra_atr, beneficiarios=beneficiarios_atr, monto_contrato=monto_contrato_atr, financiamiento=financiamiento_atr, expediente_numero=expediente_numero_atr)
+			else:
+				print("El registro no posee todas sus valores")
 
 	@classmethod
 	def nueva_obra(cls):
