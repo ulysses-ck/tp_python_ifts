@@ -6,6 +6,9 @@ from abc import ABCMeta
 from modelo_orm import *
 from typing import Optional
 
+
+SEPARATOR_LINE = "==================================="
+
 class GestionarObras(metaclass=ABCMeta):
 	df_obras_publicas: pd.DataFrame = None
 	sqlite_db_obras: Optional[SqliteDatabase] = None
@@ -13,6 +16,9 @@ class GestionarObras(metaclass=ABCMeta):
 	@classmethod
 	def extraer_datos(cls):
 		try:
+			print(SEPARATOR_LINE)
+			print("Extrayendo csv")
+			print(SEPARATOR_LINE)
 			df = pd.read_csv("./observatorio-de-obras-urbanas.csv")
 			return df
 		except FileNotFoundError as e:
@@ -23,6 +29,9 @@ class GestionarObras(metaclass=ABCMeta):
 	def conectar_db(cls):
 		db_obras = SqliteDatabase("./obras_urbanas.db")
 		try:
+			print(SEPARATOR_LINE)
+			print("Conectando Base de Datos")
+			print(SEPARATOR_LINE)
 			db_obras.connect()
 			return db_obras
 		except OperationalError as e:
@@ -31,16 +40,26 @@ class GestionarObras(metaclass=ABCMeta):
 
 	@classmethod
 	def mapear_orm(cls):
+		print(SEPARATOR_LINE)
+		print("Creando Bases de Datos")
+		print(SEPARATOR_LINE)
 		cls.sqlite_db_obras.create_tables([TipoEntorno, TipoEtapa, TipoObra, TipoAreaResponsable, TipoContratacion, Empresa, Fechas, LicitacionOfertaEmpresa, TipoComuna, TipoBarrio, Obra])
 
 	@classmethod
 	def limpiar_datos(cls):
+		print(SEPARATOR_LINE)
+		print("Limpiando datos")
+		print(SEPARATOR_LINE)
 		cls.df_obras_publicas.dropna(subset=["entorno", "nombre", "etapa", "tipo", "area_responsable", "monto_contrato", "comuna", "barrio", "fecha_inicio", "licitacion_oferta_empresa", "contratacion_tipo", "nro_contratacion", "cuit_contratista"], axis=0, inplace=True)
 
 	@classmethod
 	def cargar_datos(cls):
+		print(SEPARATOR_LINE)
+		print("Cargando base de datos")
+		print(SEPARATOR_LINE)
+
 		# TODO cargar los datos del csv a la tabla
-		#lista donde pongo las columnas a traer para convertir en tablas unicas
+		# lista donde pongo las columnas a traer para convertir en tablas unicas
 		tablas_a_traer = [
 			{ "name_column": "area_responsable",
 				"table": TipoAreaResponsable,
@@ -76,7 +95,9 @@ class GestionarObras(metaclass=ABCMeta):
 				create_new_record(property=tabs["property"], table=tabs["table"], value=dato)
 
 		# cargando TipoBarrio
-
+			print("===================================")
+			print("cargando licitaciones y obras")
+			print("===================================")
 		# obtener un dataframe resultante de solo dos columnas
 		df_comunas_barrios = cls.df_obras_publicas[["barrio", "comuna"]].drop_duplicates()
 		# recorrer el dataframe
@@ -85,6 +106,7 @@ class GestionarObras(metaclass=ABCMeta):
 			barrio = row["barrio"]
 			# obtener la comuna del csv
 			comuna = row["comuna"]
+			# REFACTOR optimizar carga de comunas con algunos registros erroneos
 			print(f"{index} Barrio: {barrio}, Comuna: {comuna}")
 			barrio_existente = TipoBarrio.get_or_none(nombre=barrio)
 			comuna_existente = TipoComuna.get_or_none(numero=comuna)
@@ -97,7 +119,58 @@ class GestionarObras(metaclass=ABCMeta):
 			else:
 				print("Barrio no posee una comuna asociada o el barrio ya existe")
 
-		# creando tabla licitacionofertaempresa y obras
+		# obtener un dataframe resultante de solo dos columnas
+		df_comunas_barrios = cls.df_obras_publicas[["licitacion_oferta_empresa", "cuit_contratista"]].drop_duplicates()
+		# recorrer el dataframe
+		for index, row in df_comunas_barrios.iterrows():
+			# obtener el nombre de la empresa del csv
+			empresa_nombre = row["licitacion_oferta_empresa"]
+			# obtener el cuit_contratista del csv
+			cuit_contratista = row["cuit_contratista"]
+			print(f"{index} Empresa nombre: {empresa_nombre}, Cuit_contratista: {cuit_contratista}")
+			empresa_existente = Empresa.get_or_none(cuit_contratista=cuit_contratista)
+			# verificando que la empresa no exista aun
+			# REFACTOR optimizar algunas creaciones con datos erroneos
+			if not empresa_existente:
+				print("No existe la empresa")
+				print("creando")
+				Empresa.create(nombre=empresa_nombre, cuit_contratista=cuit_contratista)
+			else:
+				print("La empresa ya existe")
+
+
+		# cargando tablas licitacion_oferta_empresa y obras_publicas
+
+		# obteniendo los datos unicos existentes en cuit_contratista
+		# datos
+
+		for registro_completo in cls.df_obras_publicas.values:
+			print(SEPARATOR_LINE)
+			print("cargando licitaciones y obras")
+			print(SEPARATOR_LINE)
+
+			# obteniendo atributos para licitacion_oferta_empresa
+			# REFACTOR optimizar tanto como utilizar una estructura de datos
+			# REFACTOR o crear una nueva funcion para recorrer y evitar codigo duplicado
+			licitacion_anio_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("licitacion_anio")]
+			mano_obra_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("mano_obra")]
+			beneficiarios_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("beneficiarios")]
+			monto_contrato_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("monto_contrato")]
+			financiamiento_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("financiamiento")]
+			expediente_numero_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("expediente-numero")]
+			print(licitacion_anio_atr)
+			print(mano_obra_atr)
+			print(beneficiarios_atr)
+			print(monto_contrato_atr)
+			print(financiamiento_atr)
+			print(expediente_numero_atr)
+
+			# obteniendo datos de tablas relacionadas
+			id_area_responsable_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("expediente-numero")]
+			id_contratacion_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("expediente-numero")]
+			id_empresa_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("cuit_contratista")]
+
+
 
 
 

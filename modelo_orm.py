@@ -75,8 +75,9 @@ class LicitacionOfertaEmpresa(BaseModel):
   # se utiliza la llave foranea para con sus respectivas tablas
   id_area_responsable = ForeignKeyField(TipoAreaResponsable, backref="tipos_area_responsable")
   id_contratacion = ForeignKeyField(TipoContratacion, backref="tipos_contratacion")
-  fechas = ForeignKeyField(Fechas, backref="fechas")
   id_empresa = ForeignKeyField(Empresa, backref="empresas")
+
+  # atributos
   licitacion_anio = IntegerField(null=True)
   mano_obra = IntegerField()
   beneficiarios = IntegerField()
