@@ -94,7 +94,7 @@ class TipoComuna(BaseModel):
   numero = IntegerField(unique=True)
 
   def __str__(self):
-    return self.numero
+    return f"{self.numero}"
 
   class Meta:
     db_table = "tipos_comuna"

@@ -6,4 +6,3 @@ GestionarObras.mapear_orm()
 GestionarObras.df_obras_publicas = GestionarObras.extraer_datos()
 GestionarObras.limpiar_datos()
 GestionarObras.cargar_datos()
-

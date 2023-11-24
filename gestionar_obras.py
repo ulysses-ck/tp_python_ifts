@@ -56,7 +56,7 @@ class GestionarObras(metaclass=ABCMeta):
 				},
 			{ "name_column": "entorno",
 				"table": TipoEntorno,
-				"property":"numero"
+				"property":"nombre"
 				},
 			{ "name_column": "etapa",
 				"table": TipoEtapa,
@@ -66,15 +66,39 @@ class GestionarObras(metaclass=ABCMeta):
 				"table": TipoObra,
 				"property": "nombre"
 				},
-
 			]
-		#ciclo para buscar cada columna de la bd que coincida con el criterio de la lista y ponerlos
-		#en una lista anidada
+		# ciclo para buscar cada columna de la bd que coincida con el criterio de la lista y ponerlos
+		# en una lista anidada
 		for tabs in tablas_a_traer:
 			datos_unicos_columna = list(cls.df_obras_publicas[tabs["name_column"]].unique())
 			for dato in datos_unicos_columna:
 				print(f"agregando {dato} de {tabs['name_column']} en {tabs['table']}")
 				create_new_record(property=tabs["property"], table=tabs["table"], value=dato)
+
+		# cargando TipoBarrio
+
+		# obtener un dataframe resultante de solo dos columnas
+		df_comunas_barrios = cls.df_obras_publicas[["barrio", "comuna"]].drop_duplicates()
+		# recorrer el dataframe
+		for index, row in df_comunas_barrios.iterrows():
+			# obtener el barrio del csv
+			barrio = row["barrio"]
+			# obtener la comuna del csv
+			comuna = row["comuna"]
+			print(f"{index} Barrio: {barrio}, Comuna: {comuna}")
+			barrio_existente = TipoBarrio.get_or_none(nombre=barrio)
+			comuna_existente = TipoComuna.get_or_none(numero=comuna)
+			# verificando que comuna existe y que el barrio no ya que seria un duplicado
+			if comuna_existente and not barrio_existente:
+				print("Existe una comuna asociada")
+				print("comuna existente:")
+				print(comuna_existente)
+				TipoBarrio.create(nombre=barrio, id_comuna=comuna_existente)
+			else:
+				print("Barrio no posee una comuna asociada o el barrio ya existe")
+
+		# creando tabla licitacionofertaempresa y obras
+
 
 
 	@classmethod

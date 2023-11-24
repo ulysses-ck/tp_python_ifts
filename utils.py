@@ -1,5 +1,6 @@
 from peewee import *
 
+# funcion para crear dinamicamente registros unicos utilizando unpacking operator
 def create_new_record(table, property, value):
 
 	dict_content = {
@@ -7,7 +8,7 @@ def create_new_record(table, property, value):
 	}
 
 	try:
-		table.create(**dict_content)
+		table.get_or_create(**dict_content)
 
 	except IntegrityError as e:
 		print("Error insertando comuna", e)
