@@ -50,7 +50,7 @@ class TipoContratacion(BaseModel):
   tipo_contratacion = CharField(unique=True)
 
   def __str__(self):
-    return self.nombre
+    return self.tipo_contratacion
 
   class Meta:
     db_table = "tipos_contratacion"
@@ -71,7 +71,6 @@ class Fechas(BaseModel):
   plazo_meses = IntegerField(null=True)
 
 class LicitacionOfertaEmpresa(BaseModel):
-  nombre = CharField()
   # se utiliza la llave foranea para con sus respectivas tablas
   id_area_responsable = ForeignKeyField(TipoAreaResponsable, backref="tipos_area_responsable")
   id_contratacion = ForeignKeyField(TipoContratacion, backref="tipos_contratacion")

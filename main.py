@@ -1,4 +1,5 @@
 from gestionar_obras import GestionarObras
+import pandas as pd
 
 GestionarObras.sqlite_db_obras = GestionarObras.conectar_db()
 GestionarObras.mapear_orm()

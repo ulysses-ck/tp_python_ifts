@@ -90,14 +90,17 @@ class GestionarObras(metaclass=ABCMeta):
 		# en una lista anidada
 		for tabs in tablas_a_traer:
 			datos_unicos_columna = list(cls.df_obras_publicas[tabs["name_column"]].unique())
+			print(SEPARATOR_LINE)
+			print(f"cargando {tabs['name_column']}")
+			print(SEPARATOR_LINE)
 			for dato in datos_unicos_columna:
 				print(f"agregando {dato} de {tabs['name_column']} en {tabs['table']}")
 				create_new_record(property=tabs["property"], table=tabs["table"], value=dato)
 
 		# cargando TipoBarrio
-			print("===================================")
-			print("cargando licitaciones y obras")
-			print("===================================")
+		print(SEPARATOR_LINE)
+		print("cargando barrios")
+		print(SEPARATOR_LINE)
 		# obtener un dataframe resultante de solo dos columnas
 		df_comunas_barrios = cls.df_obras_publicas[["barrio", "comuna"]].drop_duplicates()
 		# recorrer el dataframe
@@ -119,10 +122,13 @@ class GestionarObras(metaclass=ABCMeta):
 			else:
 				print("Barrio no posee una comuna asociada o el barrio ya existe")
 
+		print(SEPARATOR_LINE)
+		print("cargando Empresas")
+		print(SEPARATOR_LINE)
 		# obtener un dataframe resultante de solo dos columnas
-		df_comunas_barrios = cls.df_obras_publicas[["licitacion_oferta_empresa", "cuit_contratista"]].drop_duplicates()
+		df_licitaciones_empresas = cls.df_obras_publicas[["licitacion_oferta_empresa", "cuit_contratista"]].drop_duplicates()
 		# recorrer el dataframe
-		for index, row in df_comunas_barrios.iterrows():
+		for index, row in df_licitaciones_empresas.iterrows():
 			# obtener el nombre de la empresa del csv
 			empresa_nombre = row["licitacion_oferta_empresa"]
 			# obtener el cuit_contratista del csv
@@ -148,31 +154,29 @@ class GestionarObras(metaclass=ABCMeta):
 			print(SEPARATOR_LINE)
 			print("cargando licitaciones y obras")
 			print(SEPARATOR_LINE)
-
+			# obteniendo datos de tablas relacionadas
+			rg_area_responsable = TipoAreaResponsable.get_or_none(nombre=registro_completo[5])
+			print(rg_area_responsable)
+			rg_contratacion_atr = TipoContratacion.get_or_none(tipo_contratacion=registro_completo[23])
+			print(rg_contratacion_atr)
+			rg_empresa_atr = Empresa.get_or_none(nombre=registro_completo[21])
+			print(rg_empresa_atr)
 			# obteniendo atributos para licitacion_oferta_empresa
 			# REFACTOR optimizar tanto como utilizar una estructura de datos
 			# REFACTOR o crear una nueva funcion para recorrer y evitar codigo duplicado
-			licitacion_anio_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("licitacion_anio")]
-			mano_obra_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("mano_obra")]
-			beneficiarios_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("beneficiarios")]
-			monto_contrato_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("monto_contrato")]
-			financiamiento_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("financiamiento")]
-			expediente_numero_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("expediente-numero")]
+			licitacion_anio_atr = registro_completo[22] if pd.isnull(registro_completo[22]) else 0
 			print(licitacion_anio_atr)
+			mano_obra_atr = registro_completo[27] if pd.isnull(registro_completo[27]) else 0
 			print(mano_obra_atr)
+			beneficiarios_atr = registro_completo[26] if pd.isnull(registro_completo[26]) else 0
 			print(beneficiarios_atr)
+			monto_contrato_atr = registro_completo[7] if pd.isnull(registro_completo[7]) and str(monto_contrato_atr).isdigit() else 0
 			print(monto_contrato_atr)
+			financiamiento_atr = registro_completo[35] if isinstance(registro_completo[35], str) else "Sin especificar"
 			print(financiamiento_atr)
+			expediente_numero_atr = registro_completo[35] if isinstance(registro_completo[35], str) else "Sin especificar"
 			print(expediente_numero_atr)
-
-			# obteniendo datos de tablas relacionadas
-			id_area_responsable_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("expediente-numero")]
-			id_contratacion_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("expediente-numero")]
-			id_empresa_atr = registro_completo[cls.df_obras_publicas.columns.get_loc("cuit_contratista")]
-
-
-
-
+			LicitacionOfertaEmpresa.get_or_create(id_area_responsable=rg_area_responsable, id_contratacion=rg_contratacion_atr, id_empresa=rg_empresa_atr, licitacion_anio=licitacion_anio_atr, mano_obra=mano_obra_atr, beneficiarios=beneficiarios_atr, monto_contrato=monto_contrato_atr, financiamiento=financiamiento_atr, expediente_numero=expediente_numero_atr)
 
 	@classmethod
 	def nueva_obra(cls):
