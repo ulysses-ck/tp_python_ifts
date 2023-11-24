@@ -55,7 +55,7 @@ def mostrar_menu(obra):
                 mano_obra,
                 porcentaje_avance,
             )
-            nueva_obra_instancia = obra.nueva_obra()
+            #nueva_obra_instancia = obra.nueva_obra()
             print("Nueva instancia de obra creada:", nueva_obra_instancia)
         elif opcion == "2":
             contratacion_tipo = obtener_tipo_contratacion()
@@ -150,6 +150,3 @@ def obtener_tipo_contratacion():
             print("Opción no válida. Intente nuevamente.")
 
 
-# Ejecución del programa
-mi_obra = Obra()
-mostrar_menu(mi_obra)

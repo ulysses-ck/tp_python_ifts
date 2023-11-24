@@ -5,6 +5,7 @@ from peewee import *
 from abc import ABCMeta
 from modelo_orm import *
 from typing import Optional
+from usuario_menu import *
 
 
 SEPARATOR_LINE = "==================================="
@@ -163,21 +164,22 @@ class GestionarObras(metaclass=ABCMeta):
 			print(rg_empresa_atr)
 
 			if rg_area_responsable and rg_contratacion_atr and rg_empresa_atr:
+				print("agregando datos")
 				# obteniendo atributos para licitacion_oferta_empresa
 				# REFACTOR optimizar tanto como utilizar una estructura de datos
 				# REFACTOR o crear una nueva funcion para recorrer y evitar codigo duplicado
-				licitacion_anio_atr = registro_completo[22] if not pd.isna(registro_completo[22]) else 0
-				print(licitacion_anio_atr)
-				mano_obra_atr = registro_completo[27] if not pd.isna(registro_completo[27]) else 0
-				print(mano_obra_atr)
-				beneficiarios_atr = registro_completo[26] if not pd.isna(registro_completo[26])  else 0
-				print(beneficiarios_atr)
-				monto_contrato_atr = registro_completo[7] if not pd.isna(registro_completo[7])  else 0
-				print(monto_contrato_atr)
-				financiamiento_atr = registro_completo[35] if isinstance(registro_completo[35], str) else "Sin especificar"
-				print(financiamiento_atr)
-				expediente_numero_atr = registro_completo[33] if isinstance(registro_completo[33], str) else "Sin especificar"
-				print(expediente_numero_atr)
+				# licitacion_anio_atr = registro_completo[22] if not pd.isna(registro_completo[22]) else 0
+				# print(licitacion_anio_atr)
+				# mano_obra_atr = registro_completo[27] if not pd.isna(registro_completo[27]) else 0
+				# print(mano_obra_atr)
+				# beneficiarios_atr = registro_completo[26] if not pd.isna(registro_completo[26])  else 0
+				# print(beneficiarios_atr)
+				# monto_contrato_atr = registro_completo[7] if not pd.isna(registro_completo[7])  else 0
+				# print(monto_contrato_atr)
+				# financiamiento_atr = registro_completo[35] if isinstance(registro_completo[35], str) else "Sin especificar"
+				# print(financiamiento_atr)
+				# expediente_numero_atr = registro_completo[33] if isinstance(registro_completo[33], str) else "Sin especificar"
+				# print(expediente_numero_atr)
 				# LicitacionOfertaEmpresa.get_or_create(id_area_responsable=rg_area_responsable, id_contratacion=rg_contratacion_atr, id_empresa=rg_empresa_atr, licitacion_anio=licitacion_anio_atr, mano_obra=mano_obra_atr, beneficiarios=beneficiarios_atr, monto_contrato=monto_contrato_atr, financiamiento=financiamiento_atr, expediente_numero=expediente_numero_atr)
 			else:
 				print("El registro no posee todas sus valores")
@@ -186,6 +188,10 @@ class GestionarObras(metaclass=ABCMeta):
 	def nueva_obra(cls):
 		# TODO crear nueva obra utilizando el modelo orm
 		print("nueva obra")
+		# llamar a obtener_datos_nueva_obra
+		# utilizar nuevo_proyecto de la clase Obra.nueva_o
+
+
 
 	@classmethod
 	def obtener_identificadores(cls):
@@ -212,8 +218,3 @@ class GestionarObras(metaclass=ABCMeta):
 		# j. Monto total de inversión. (atributo financiamiento)
 		print("obtener indicadores")
 
-
-gestionador_de_obras = GestionarObras()
-gestionador_de_obras.extraer_datos()
-
-GestionarObras.extraer_datos()

@@ -10,7 +10,6 @@ GestionarObras.mapear_orm()
 
 GestionarObras.df_obras_publicas = GestionarObras.extraer_datos()
 GestionarObras.limpiar_datos()
-GestionarObras.nueva_obras()
-GestionarObras.cargar_datos()
-
-
+# GestionarObras.cargar_datos()
+for anio in GestionarObras.df_obras_publicas["licitacion_anio"]:
+	print(anio)
