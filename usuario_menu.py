@@ -1,11 +1,9 @@
 import random
 from datetime import datetime
 from peewee import *
-from modelo_orm import Obra
-
+from modelo_orm import *
 
 numeros_contratacion_utilizados = []
-
 
 def generar_numero_contratacion():
     while True:
@@ -18,7 +16,7 @@ def generar_numero_contratacion():
             return nuevo_numero_contratacion
 
 
-def mostrar_menu(obra):
+def mostrar_menu():
     while True:
         print("----- Menú de Obras -----")
         print("1. Nuevo Proyecto")
@@ -38,25 +36,19 @@ def mostrar_menu(obra):
             (
                 nombre,
                 descripcion,
-                monto_contrato,
-                direccion,
-                plazo_meses,
-                beneficiarios,
-                mano_obra,
                 porcentaje_avance,
+                destacada,
+                barrio,
+                tipo_entorno,
+                etapa,
+                tipo_obra,
+                fechas,
+                licitacion_oferta_empresa
             ) = obtener_datos_nueva_obra()
-            obra.nuevo_proyecto(
-                nombre,
-                descripcion,
-                monto_contrato,
-                direccion,
-                plazo_meses,
-                beneficiarios,
-                mano_obra,
-                porcentaje_avance,
-            )
-            #nueva_obra_instancia = obra.nueva_obra()
-            print("Nueva instancia de obra creada:", nueva_obra_instancia)
+
+            print("Nueva obra creada")
+            # Obra.create(nombre, descripcion, porcentaje_avance, destacada, barrio, tipo_entorno)
+
         elif opcion == "2":
             contratacion_tipo = obtener_tipo_contratacion()
             if contratacion_tipo is not None:
@@ -104,22 +96,117 @@ def mostrar_menu(obra):
 def obtener_datos_nueva_obra():
     nombre = input("Ingrese el nombre del proyecto: ")
     descripcion = input("Ingrese la descripción del proyecto: ")
-    monto_contrato = float(input("Ingrese el monto del contrato: "))
-    direccion = input("Ingrese la dirección del proyecto: ")
-    plazo_meses = int(input("Ingrese el plazo en meses: "))
-    beneficiarios = input("Ingrese los beneficiarios del proyecto: ")
-    mano_obra = input("Ingrese la mano de obra: ")
-    porcentaje_avance = float(input("Ingrese el porcentaje de avance: "))
+    porcentaje_avance = input("Ingrese porcentaje de avance del proyecto: ")
+    print("Es obra destacada? 1) Si; 2) No")
+    try:
+        while True:
+            opcion = int(input("Ingrese si es destacada o no eligiendo una de las opciones numericamente: "))
+            if opcion == 1:
+                destacada = True
+                print("Seleccion guardada")
+                break
+            if opcion == 2:
+                destacada = False
+                print("Seleccion guardada")
+                break
+            else:
+                print("Elija una opcion valida")
+                input()
+    except ValueError:
+        print("Elija una opcion numerica")
+    try:
+        while True:
+            lista_opciones = extraer_Opciones(TipoBarrio)
+            seleccion = int(input("Seleccione uno de los barrios disponibles digitando un numero: "))
+            if seleccion in lista_opciones:
+                print("barrio seleccionado")
+                barrio = seleccion
+                break
+            else:
+                print("Elija una opcion valida")
+                input()
+    except ValueError:
+        print("Elija una opcion numerica")
+    try:
+        while True:
+            lista_opciones = extraer_Opciones(TipoEntorno)
+            seleccion = int(input("Seleccione uno de los entornos disponibles digitando un numero: "))
+            if seleccion in lista_opciones:
+                print("Entorno seleccionado")
+                tipo_entorno = seleccion
+                break
+            else:
+                print("Elija una opcion valida")
+                input()
+    except ValueError:
+        print("Elija una opcion numerica")
+    try:
+        while True:
+            lista_opciones = extraer_Opciones(TipoEtapa)
+            seleccion = int(input("Seleccione uno de las etapas disponibles digitando un numero: "))
+            if seleccion in lista_opciones:
+                print("Etapa seleccionada")
+                etapa = seleccion
+                break
+            else:
+                print("Elija una opcion valida")
+                input()
+    except ValueError:
+        print("Elija una opcion numerica")
+    try:
+        while True:
+            lista_opciones = extraer_Opciones(TipoObra)
+            seleccion = int(input("Seleccione uno de los tipos de obras disponibles digitando un numero: "))
+            if seleccion in lista_opciones:
+                print("Tipo de obra seleccionada")
+                tipo_obra = seleccion
+                break
+            else:
+                print("Elija una opcion valida")
+                input()
+    except ValueError:
+        print("Elija una opcion numerica")
+    while True:
+        try:
+            fecha_inicial = input("Ingrese la fecha de inicio con el siguiente formato (YYYY-MM-DD): ")
+            fecha_final = input("Ingrese la fecha de cierre del proyecto con el siguiente formato (YYYY-MM-DD): ")
+            try:
+                plazo_meses = int(input("Ingrese el plazo en meses(solo numeros): "))
+            except ValueError:
+                print("Ingrese un dato numerico")
+            registro = Fechas(fecha_inicial, fecha_final, plazo_meses)
+            fechas= registro.id
+            print(fechas)
+            break
+        except IntegrityError as e:
+            print(f"Error {e}")
+        except DataError as e:
+            print(f"Error {e}")
+    try:
+        while True:
+            lista_opciones, indices = extraer_Licitaciones(LicitacionOfertaEmpresa)
+            seleccion = int(input("Seleccione uno de las licitaciones disponibles digitando un numero: "))
+            if seleccion in indices:
+                print("Licitacion seleccionada")
+                licitacion_oferta_empresa = seleccion
+                break
+            else:
+                print("Elija una opcion valida")
+                input("porfa apruebe profe")
+    except ValueError:
+        print("Elija una opcion numerica")
 
     return (
         nombre,
         descripcion,
-        monto_contrato,
-        direccion,
-        plazo_meses,
-        beneficiarios,
-        mano_obra,
         porcentaje_avance,
+        destacada,
+        barrio,
+        tipo_entorno,
+        etapa,
+        tipo_obra,
+        fechas,
+        licitacion_oferta_empresa,
     )
 
 
@@ -150,3 +237,21 @@ def obtener_tipo_contratacion():
             print("Opción no válida. Intente nuevamente.")
 
 
+def extraer_Opciones(cls):
+    opciones= cls.select()
+    print(opciones)
+    pk_Opciones = []
+    for opcion in opciones:
+        print(f"{opcion.id} {opcion.nombre}")
+        pk_Opciones.append(opcion.id)
+    return pk_Opciones
+
+def extraer_Licitaciones(cls):
+    opciones= cls.select()
+    pk_Opciones = []
+    indices= []
+    for indice, opcion in enumerate(opciones):
+        print(f"{indice} = {opcion.nro_contratacion}")
+        pk_Opciones.append(opcion.nro_contratacion)
+        indices.append(indice)
+    return pk_Opciones, indices

@@ -3,7 +3,7 @@ from modelo_orm import *
 import pandas as pd
 from datetime import datetime
 
-
+SEPARATOR_LINE = "==================================="
 # funcion para crear dinamicamente registros unicos utilizando unpacking operator
 def create_new_record(table, property, value):
 
@@ -158,7 +158,9 @@ def rellenar_tablas_licitaciones_empresas(registro_completo):
 		expediente_numero_atr = registro_completo[33] if isinstance(registro_completo[33], str) else "Sin especificar"
 		print(f"expediente_numero_atr: {expediente_numero_atr}")
 		if rg_area_responsable and rg_contratacion_atr and rg_empresa_atr:
-			print("agregando datos")
+			print(SEPARATOR_LINE)
+			print("agregando LICITACION_OFERTA_EMPRESA")
+			print(SEPARATOR_LINE)
 			nueva_empresa_creada = LicitacionOfertaEmpresa.get_or_create(nro_contratacion=rg_nro_contratacion,id_area_responsable=rg_area_responsable, id_contratacion=rg_contratacion_atr, id_empresa=rg_empresa_atr, licitacion_anio=licitacion_anio_atr, mano_obra=mano_obra_atr, beneficiarios=beneficiarios_atr, monto_contrato=monto_contrato_atr, financiamiento=financiamiento_atr, expediente_numero=expediente_numero_atr)
 			return nueva_empresa_creada
 		else:
@@ -169,16 +171,30 @@ def rellenar_tablas_fechas(registro_completo):
 	fecha_fin_inicial = registro_completo[14]
 	plazo_meses = registro_completo[15]
 	if not pd.isna(fecha_inicio) and not pd.isna(fecha_fin_inicial) and not pd.isna(plazo_meses):
-		fecha_inicio = datetime.strptime(fecha_inicio, "%m/%d/%Y")
-		# try:
-		plazo_meses = int(plazo_meses)
+		try:
+			fecha_inicio = datetime.strptime(fecha_inicio, "%d/%m/%Y")
+		except ValueError as e:
+			print(f"Error: {e}")
+
+		try:
+			fecha_fin_inicial = datetime.fromtimestamp(int(fecha_fin_inicial) / 1000)
+		except ValueError as e:
+			print(f"Error: {e}")
+
+		try:
+			plazo_meses = int(plazo_meses)
+		except ValueError as e:
+			print(f"Error: {e}")
 	else:
 		fecha_inicio = None
 		fecha_fin_inicial = None
 		plazo_meses = None
 
+	print(SEPARATOR_LINE)
+	print("agregando FECHAS")
+	print(SEPARATOR_LINE)
 	# creando datos
 	print(f"fecha_inicio: {fecha_inicio}")
 	print(f"fecha_fin_inicial: {fecha_fin_inicial}")
 	print(f"plazo_meses: {plazo_meses}")
-	return Fechas.create(fecha_inicio=fecha_inicio, fecha_fin_inicial=fecha_fin_inicial, plazo_meses=plazo_meses)
+	return Fechas.get_or_create(fecha_inicio=fecha_inicio, fecha_fin_inicial=fecha_fin_inicial, plazo_meses=plazo_meses)

@@ -6,11 +6,8 @@ from modelo_orm import *
 GestionarObras.sqlite_db_obras = GestionarObras.conectar_db()
 GestionarObras.mapear_orm()
 
-# SqliteDatabase("obras_urbanas.db").drop_tables(LicitacionOfertaEmpresa)
-
 GestionarObras.df_obras_publicas = GestionarObras.extraer_datos()
+
 GestionarObras.limpiar_datos()
-GestionarObras.nueva_obras()
 GestionarObras.cargar_datos()
-
-
+GestionarObras.nueva_obra()

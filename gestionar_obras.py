@@ -82,25 +82,70 @@ class GestionarObras(metaclass=ABCMeta):
 		# obteniendo los datos unicos existentes en cuit_contratista
 		# datos
 		for registro_completo in cls.df_obras_publicas.values:
-			nueva_empresa_creada = rellenar_tablas_licitaciones_empresas(registro_completo)
+			nueva_licitacion_oferta_empresa = rellenar_tablas_licitaciones_empresas(registro_completo)
 
-			# nueva_fecha_creada = rellenar_tablas_fechas(registro_completo)
+			nueva_fecha_creada = rellenar_tablas_fechas(registro_completo)
 
-			# if nueva_empresa_creada:
-			# 	barrio_registro = registro_completo[9]
-			# 	entorno_registro = registro_completo[1]
-			# 	etapa_registro = registro_completo[3]
-			# 	tipo_obra_registro = registro_completo[4]
-			# 	fecha_inicio = nueva_fecha_creada
+			if nueva_licitacion_oferta_empresa and nueva_fecha_creada:
+				print(SEPARATOR_LINE)
+				print("Intentantdo crear NUEVA_OBRA")
+				print(SEPARATOR_LINE)
 
+				barrio_registro = TipoBarrio.get_or_none(nombre=registro_completo[9])
+				print("Barrio de la fila")
+				print(barrio_registro)
+				entorno_registro = TipoEntorno.get_or_none(nombre=registro_completo[1])
+				print("Entorno de la fila")
+				print(entorno_registro)
+				etapa_registro = TipoEtapa.get_or_none(nombre=registro_completo[3])
+				print("etapa de la fila")
+				print(etapa_registro)
+				tipo_obra_registro = TipoObra.get_or_none(nombre=registro_completo[4])
+				print("Tipo Obra de la fila")
+				print(tipo_obra_registro)
+
+
+				# if barrio_registro and entorno_registro and etapa_registro and tipo_obra_registro:
+				# 	print(SEPARATOR_LINE)
+				# 	print("Creando NUEVA_OBRA")
+				# 	print(SEPARATOR_LINE)
+				# 	nombre_rg = registro_completo[2]
+				# 	print("Nombre de la fila")
+				# 	print(nombre_rg)
+				# 	descripcion_rg = registro_completo[6]
+				# 	print("descripcion de la fila")
+				# 	print(descripcion_rg)
+				# 	porcentaje_rg = registro_completo[16]
+				# 	print("porcentaje_rg de la fila")
+				# 	print(porcentaje_rg)
+				# 	destacada_rg = registro_completo[29]
+				# 	print("destacada_rg de la fila")
+				# 	print(destacada_rg)
+
+				# 	if(pd.isna(destacada_rg)):
+				# 		destacada_rg = False
+				# 	else:
+				# 		destacada_rg = True
+				# 		print(destacada_rg)
+
+				# 	try:
+				# 		porcentaje_rg = float(porcentaje_rg)
+				# 		print(porcentaje_rg)
+				# 	except ValueError as e:
+				# 		print(f"Error: {e}")
+				# 		porcentaje_rg = 0
+
+				# 	Obra.create(nombre=nombre_rg, descripcion=descripcion_rg, porcentaje_avance=porcentaje_rg, destacada=destacada_rg, licitacion_oferta_empresa=nueva_licitacion_oferta_empresa, fechas=nueva_fecha_creada, barrio=barrio_registro, tipo_entorno=entorno_registro, etapa=etapa_registro, tipo_obra=tipo_obra_registro)
+				# else:
+				# 	print("Faltan valores para crear la Obra Publica")
 
 
 	@classmethod
 	def nueva_obra(cls):
-		# TODO crear nueva obra utilizando el modelo orm
 		print("nueva obra")
-		# llamar a obtener_datos_nueva_obra
-		# utilizar nuevo_proyecto de la clase Obra.nueva_o
+		# llamar a obtener_datos_nueva_obraç
+		mostrar_menu()
+
 
 
 

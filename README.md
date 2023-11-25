@@ -5,7 +5,7 @@
 * Apaza, Ulises
 * Amezaga, Diego
 * Soto, Jamil
-* Soarez Viana, Leonardo
+* Soares Viana, Leonardo
 * Calanna, Cecilia
 
 # Objetivos
@@ -44,7 +44,7 @@ git clone https://github.com/ulysses-ck/tp_python_ifts.git
 cd tp_python_ifts
 ```
 
-### Make your changes and create a new branch 
+### Make your changes and create a new branch
 ```sh
 git checkout -b dev
 git add .
