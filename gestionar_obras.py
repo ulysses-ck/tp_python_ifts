@@ -1,5 +1,5 @@
 import pandas as pd
-from utils import create_new_record
+from utils import *
 
 from peewee import *
 from abc import ABCMeta
@@ -59,130 +59,41 @@ class GestionarObras(metaclass=ABCMeta):
 		print("Cargando base de datos")
 		print(SEPARATOR_LINE)
 
-		# TODO cargar los datos del csv a la tabla
-		# lista donde pongo las columnas a traer para convertir en tablas unicas
-		tablas_a_traer = [
-			{ "name_column": "area_responsable",
-				"table": TipoAreaResponsable,
-				"property": "nombre"
-				},
-			{ "name_column": "contratacion_tipo",
-				"table": TipoContratacion,
-				"property": "tipo_contratacion"
-				},
-			{ "name_column": "comuna",
-				"table": TipoComuna,
-				"property":"numero"
-				},
-			{ "name_column": "entorno",
-				"table": TipoEntorno,
-				"property":"nombre"
-				},
-			{ "name_column": "etapa",
-				"table": TipoEtapa,
-				"property":"nombre"
-				},
-			{ "name_column": "tipo",
-				"table": TipoObra,
-				"property": "nombre"
-				},
-			]
-		# ciclo para buscar cada columna de la bd que coincida con el criterio de la lista y ponerlos
-		# en una lista anidada
-		for tabs in tablas_a_traer:
-			datos_unicos_columna = list(cls.df_obras_publicas[tabs["name_column"]].unique())
-			print(SEPARATOR_LINE)
-			print(f"cargando {tabs['name_column']}")
-			print(SEPARATOR_LINE)
-			for dato in datos_unicos_columna:
-				print(f"agregando {dato} de {tabs['name_column']} en {tabs['table']}")
-				create_new_record(property=tabs["property"], table=tabs["table"], value=dato)
+		print(SEPARATOR_LINE)
+		print("cargando tablas con valores unicos")
+		print(SEPARATOR_LINE)
+		crear_tablas_con_valores_unicos(cls.df_obras_publicas)
 
-		# cargando TipoBarrio
 		print(SEPARATOR_LINE)
 		print("cargando barrios")
 		print(SEPARATOR_LINE)
-		# obtener un dataframe resultante de solo dos columnas
-		df_comunas_barrios = cls.df_obras_publicas[["barrio", "comuna"]].drop_duplicates()
-		# recorrer el dataframe
-		for index, row in df_comunas_barrios.iterrows():
-			# obtener el barrio del csv
-			barrio = row["barrio"]
-			# obtener la comuna del csv
-			comuna = row["comuna"]
-			# REFACTOR optimizar carga de comunas con algunos registros erroneos
-			print(f"{index} Barrio: {barrio}, Comuna: {comuna}")
-			barrio_existente = TipoBarrio.get_or_none(nombre=barrio)
-			comuna_existente = TipoComuna.get_or_none(numero=comuna)
-			# verificando que comuna existe y que el barrio no ya que seria un duplicado
-			if comuna_existente and not barrio_existente:
-				print("Existe una comuna asociada")
-				print("comuna existente:")
-				print(comuna_existente)
-				TipoBarrio.create(nombre=barrio, id_comuna=comuna_existente)
-			else:
-				print("Barrio no posee una comuna asociada o el barrio ya existe")
+		rellenar_tablas_barrios(cls.df_obras_publicas)
 
 		print(SEPARATOR_LINE)
 		print("cargando Empresas")
 		print(SEPARATOR_LINE)
-		# obtener un dataframe resultante de solo dos columnas
-		df_licitaciones_empresas = cls.df_obras_publicas[["licitacion_oferta_empresa", "cuit_contratista"]].drop_duplicates()
-		# recorrer el dataframe
-		for index, row in df_licitaciones_empresas.iterrows():
-			# obtener el nombre de la empresa del csv
-			empresa_nombre = row["licitacion_oferta_empresa"]
-			# obtener el cuit_contratista del csv
-			cuit_contratista = row["cuit_contratista"]
-			print(f"{index} Empresa nombre: {empresa_nombre}, Cuit_contratista: {cuit_contratista}")
-			empresa_existente = Empresa.get_or_none(cuit_contratista=cuit_contratista)
-			# verificando que la empresa no exista aun
-			# REFACTOR optimizar algunas creaciones con datos erroneos
-			if not empresa_existente:
-				print("No existe la empresa")
-				print("creando")
-				Empresa.create(nombre=empresa_nombre, cuit_contratista=cuit_contratista)
-			else:
-				print("La empresa ya existe")
-
-
-		# cargando tablas licitacion_oferta_empresa y obras_publicas
-
-		# obteniendo los datos unicos existentes en cuit_contratista
-		# datos
+		rellenar_tablas_empresas(cls.df_obras_publicas)
 
 		print(SEPARATOR_LINE)
 		print("cargando licitaciones y obras")
 		print(SEPARATOR_LINE)
-		for registro_completo in cls.df_obras_publicas.values:
-			# obteniendo datos de tablas relacionadas
-			rg_area_responsable = TipoAreaResponsable.get_or_none(nombre=registro_completo[5])
-			print(rg_area_responsable)
-			rg_contratacion_atr = TipoContratacion.get_or_none(tipo_contratacion=registro_completo[23])
-			print(rg_contratacion_atr)
-			rg_empresa_atr = Empresa.get_or_none(nombre=registro_completo[21])
-			print(rg_empresa_atr)
+		# cargando tablas licitacion_oferta_empresa y obras_publicas
 
-			if rg_area_responsable and rg_contratacion_atr and rg_empresa_atr:
-				print("agregando datos")
-				# obteniendo atributos para licitacion_oferta_empresa
-				# REFACTOR optimizar tanto como utilizar una estructura de datos
-				# REFACTOR o crear una nueva funcion para recorrer y evitar codigo duplicado
-				# licitacion_anio_atr = registro_completo[22] if not pd.isna(registro_completo[22]) else 0
-				# print(licitacion_anio_atr)
-				# mano_obra_atr = registro_completo[27] if not pd.isna(registro_completo[27]) else 0
-				# print(mano_obra_atr)
-				# beneficiarios_atr = registro_completo[26] if not pd.isna(registro_completo[26])  else 0
-				# print(beneficiarios_atr)
-				# monto_contrato_atr = registro_completo[7] if not pd.isna(registro_completo[7])  else 0
-				# print(monto_contrato_atr)
-				# financiamiento_atr = registro_completo[35] if isinstance(registro_completo[35], str) else "Sin especificar"
-				# print(financiamiento_atr)
-				# expediente_numero_atr = registro_completo[33] if isinstance(registro_completo[33], str) else "Sin especificar"
-				# print(expediente_numero_atr)
-				# LicitacionOfertaEmpresa.get_or_create(id_area_responsable=rg_area_responsable, id_contratacion=rg_contratacion_atr, id_empresa=rg_empresa_atr, licitacion_anio=licitacion_anio_atr, mano_obra=mano_obra_atr, beneficiarios=beneficiarios_atr, monto_contrato=monto_contrato_atr, financiamiento=financiamiento_atr, expediente_numero=expediente_numero_atr)
-			else:
-				print("El registro no posee todas sus valores")
+		# obteniendo los datos unicos existentes en cuit_contratista
+		# datos
+		for registro_completo in cls.df_obras_publicas.values:
+			nueva_empresa_creada = rellenar_tablas_licitaciones_empresas(registro_completo)
+
+			# nueva_fecha_creada = rellenar_tablas_fechas(registro_completo)
+
+			# if nueva_empresa_creada:
+			# 	barrio_registro = registro_completo[9]
+			# 	entorno_registro = registro_completo[1]
+			# 	etapa_registro = registro_completo[3]
+			# 	tipo_obra_registro = registro_completo[4]
+			# 	fecha_inicio = nueva_fecha_creada
+
+
 
 	@classmethod
 	def nueva_obra(cls):

@@ -9,7 +9,11 @@ GestionarObras.mapear_orm()
 # SqliteDatabase("obras_urbanas.db").drop_tables(LicitacionOfertaEmpresa)
 
 GestionarObras.df_obras_publicas = GestionarObras.extraer_datos()
+
+# index = 0
+# for column in GestionarObras.df_obras_publicas.columns:
+# 	print(f"{index} - Columna: {column}")
+# 	index+=1
+
 GestionarObras.limpiar_datos()
-# GestionarObras.cargar_datos()
-for anio in GestionarObras.df_obras_publicas["licitacion_anio"]:
-	print(anio)
+GestionarObras.cargar_datos()

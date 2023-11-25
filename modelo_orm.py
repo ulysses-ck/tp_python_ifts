@@ -71,6 +71,9 @@ class Fechas(BaseModel):
   plazo_meses = IntegerField(null=True)
 
 class LicitacionOfertaEmpresa(BaseModel):
+  # primary key
+  nro_contratacion = CharField(primary_key = True)
+
   # se utiliza la llave foranea para con sus respectivas tablas
   id_area_responsable = ForeignKeyField(TipoAreaResponsable, backref="tipos_area_responsable")
   id_contratacion = ForeignKeyField(TipoContratacion, backref="tipos_contratacion")
@@ -78,7 +81,7 @@ class LicitacionOfertaEmpresa(BaseModel):
 
   # atributos
   licitacion_anio = IntegerField(null=True)
-  mano_obra = IntegerField()
+  mano_obra = FloatField()
   beneficiarios = IntegerField()
   monto_contrato = DoubleField()
   financiamiento = CharField()
